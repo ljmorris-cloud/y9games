@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QUIZ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Bangers&family=Lexend:wght@400;600&display=swap">
+<style>
+:root{--y:#fbe14a;--y2:#fdf08a;--ink:#111;--orange:#d96a00;--green:#b7f0ae;--red:#ffb4b4;
+color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;color:var(--ink);font-family:'Lexend',system-ui,sans-serif}
+body{min-height:100vh;background:radial-gradient(ellipse at 15% 10%,var(--y2),var(--y) 55%,#f7d52c);display:flex;align-items:center;justify-content:center;padding:20px;overflow-x:hidden;position:relative}
+.doodle{position:fixed;pointer-events:none;opacity:.95}
+#bulb{top:14px;left:14px;width:110px}#mag{top:14px;right:14px;width:90px}#think{bottom:14px;right:14px;width:100px}
+@media(max-width:640px){#bulb{width:60px}#mag{width:52px}#think{width:58px}}
+main{position:relative;z-index:2;width:100%;max-width:640px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px;padding:70px 0 90px}
+.title{font-family:'Lilita One','Bangers',Impact,sans-serif;font-size:clamp(80px,22vw,170px);line-height:1;margin:0;color:var(--y);-webkit-text-stroke:5px #000;paint-order:stroke fill;text-shadow:8px 8px 0 #000;transform:rotate(-4deg) skewX(-6deg);letter-spacing:4px}
+.h{font-family:'Bangers',Impact,sans-serif;font-size:clamp(26px,6vw,38px);letter-spacing:2px;color:var(--y);-webkit-text-stroke:2px #000;paint-order:stroke fill;text-shadow:3px 3px 0 #000;margin:0;text-align:left;width:100%}
+.panel{text-align:left;font-size:clamp(14px,3.6vw,17px);line-height:1.7;width:100%}
+.panel p{margin:0 0 8px}.panel ol{margin:6px 0 0;padding-left:24px}
+.btn{font:600 18px 'Lexend',sans-serif;background:#000;color:var(--y);border:0;border-radius:12px;padding:14px 26px;cursor:pointer;display:inline-flex;align-items:center;gap:12px}
+.btn:hover,.btn:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.btn.alt{background:#fff;color:#000;border:3px solid #000}
+.row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.qbox{background:#fff;border:3px solid #000;border-bottom:10px solid #9a9a9a;border-right:10px solid #9a9a9a;padding:26px 22px;font-size:clamp(17px,4.5vw,24px);width:100%;text-align:center}
+.answers{display:grid;gap:14px;width:min(420px,100%)}
+.ans{font:400 clamp(16px,4.2vw,21px) 'Lexend',sans-serif;background:#fff;border:4px solid #000;border-radius:40px;padding:14px 20px;cursor:pointer;box-shadow:0 8px 0 var(--orange);transition:transform .08s}
+.ans:hover:not(:disabled){transform:translateY(-3px);background:#fffbe0}
+.ans:active:not(:disabled){transform:translateY(4px);box-shadow:0 3px 0 var(--orange)}
+.ans:disabled{cursor:default}
+.ans.right{background:var(--green)}.ans.wrong{background:var(--red)}
+.meta{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:14px;font-weight:600}
+.badge{background:#e3a31c;color:#fff7d6;border-radius:50% 50% 46% 54%;width:64px;height:76px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;box-shadow:0 0 0 3px #00000022}
+.fb{min-height:56px;font-size:18px;font-weight:600}
+.fb small{display:block;font-weight:400;font-size:14px}
+.big{font-family:'Bangers',Impact,sans-serif;font-size:clamp(34px,10vw,56px);color:var(--y);-webkit-text-stroke:3px #000;paint-order:stroke fill;text-shadow:4px 4px 0 #000;margin:0}
+.pop{animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.5)}to{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.pop{animation:none}.ans{transition:none}}
+.hide{visibility:hidden}
+</style>
+</head>
+<body>
+<svg class="doodle" id="bulb" viewBox="0 0 120 130" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"><path d="M60 22c-22 0-36 18-32 38 3 14 14 20 14 34h36c0-14 11-20 14-34 4-20-10-38-32-38z" fill="#fff6"/><path d="M45 56c-4-10 8-12 8-4s-8 6-4 14M70 56c-4-10 8-12 8-4s-8 6-4 14M46 100h28M48 108h24M52 116h16M60 4v10M24 14l8 8M96 14l-8 8M8 50l12 4M112 50l-12 4"/></svg>
+<svg class="doodle" id="mag" viewBox="0 0 100 100"><circle cx="40" cy="40" r="28" fill="none" stroke="#000" stroke-width="12"/><path d="M62 62l26 26" stroke="#000" stroke-width="12" stroke-linecap="round"/></svg>
+<svg class="doodle" id="think" viewBox="0 0 100 100"><circle cx="48" cy="52" r="38" fill="#fdc74a" stroke="#333" stroke-width="4"/><circle cx="34" cy="48" r="6" fill="#d96a00"/><circle cx="62" cy="48" r="6" fill="#d96a00"/><circle cx="26" cy="62" r="6" fill="#f9a77a"/><circle cx="72" cy="62" r="6" fill="#f9a77a"/><path d="M38 70c8-4 16-4 24 0" stroke="#d96a00" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 36c4-4 10-4 14-2M56 34c4-2 10-2 14 2" stroke="#d96a00" stroke-width="3" fill="none"/><text x="78" y="22" font-size="22" font-weight="700" fill="#333">?</text></svg>
+
+<main id="app"></main>
+
+<script>
+// ===== SETTINGS (from the student's BLOCK A) =====
+const GAME_TITLE = "QUIZ";
+const CORRECT_MESSAGE = "Correct!";
+const INCORRECT_MESSAGE = "Not yet, good luck next time!";
+const GOODBYE_MESSAGE = "Thanks for playing!";
+const INSTRUCTIONS = [
+  "Welcome to QUIZ!",
+  "Answer each question.",
+  "Your score will be shown at the end."
+];
+// Each question has its answer, plus wrong options to click on (like the A / B / C mockup).
+const QUESTIONS = [
+  {q:"What is the biggest organ in the human body?", a:"Skin", wrong:["Liver","Heart"]},
+  {q:"How many weeks are in a year?", a:"52", wrong:["12","365"]},
+  {q:"What is the name of the biggest planet?", a:"Jupiter", wrong:["Saturn","Earth"]},
+  {q:"Which month is in the middle of the year?", a:"June", wrong:["April","September"]},
+  {q:"What is the name of our galaxy?", a:"Milky Way", wrong:["Andromeda","Whirlpool"]}
+];
+
+// ===== SOUNDS: happy trumpet if correct, low sad one if wrong =====
+let ac;
+function tone(freq, t0, dur, type, vol, cutoff){
+  const o = ac.createOscillator(), g = ac.createGain(), f = ac.createBiquadFilter();
+  o.type = type; o.frequency.setValueAtTime(freq, ac.currentTime + t0);
+  f.type = "lowpass"; f.frequency.value = cutoff;
+  g.gain.setValueAtTime(0.0001, ac.currentTime + t0);
+  g.gain.exponentialRampToValueAtTime(vol, ac.currentTime + t0 + 0.04);
+  g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + t0 + dur);
+  o.connect(f); f.connect(g); g.connect(ac.destination);
+  o.start(ac.currentTime + t0); o.stop(ac.currentTime + t0 + dur + 0.05);
+}
+function sound(good){
+  try{
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    if(good){ [[523,0],[659,.13],[784,.26],[1047,.4]].forEach(([f,t],i)=>tone(f,t,i==3?.6:.16,"sawtooth",.18,2600)); }
+    else { [[196,0,.35],[185,.35,.35],[165,.7,.7]].forEach(([f,t,d])=>tone(f,t,d,"sawtooth",.2,700)); }
+  }catch(e){}
+}
+
+// ===== STATE =====
+let S = {best:0};
+const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const app = document.getElementById("app");
+const trumpet = `<svg width="90" height="50" viewBox="0 0 90 50"><g fill="none" stroke="#e3a31c" stroke-width="5" stroke-linecap="round"><path d="M6 28h50"/><path d="M56 28l26-18v36z" fill="#fbe14a"/><path d="M20 28v-8h20v8"/></g></svg>`;
+const arrow = `<svg width="26" height="20" viewBox="0 0 26 20"><path d="M2 10h20M14 2l8 8-8 8" fill="none" stroke="#fbe14a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function titleScreen(){
+  app.innerHTML = `<h1 class="title">${GAME_TITLE}</h1>
+    <div class="row"><button class="btn" id="go">Start ${arrow}</button><button class="btn alt" id="how">How to play</button></div>`;
+  document.getElementById("go").onclick = startQuiz;
+  document.getElementById("how").onclick = infoScreen;
+}
+
+function infoScreen(){
+  app.innerHTML = `<h2 class="h">Game information:</h2>
+    <div class="panel"><p>${INSTRUCTIONS.join(" ")}</p>
+      <p>Move the mouse over the answer you pick and click it. You will hear a happy trumpet if you are correct and a low sad one if you are wrong. Press the Next button to go to the next question. A small score shows how many you have right.</p></div>
+    ${trumpet}
+    <h2 class="h">Game instructions:</h2>
+    <div class="panel"><ol><li>Answer the question by clicking on the answer.</li><li>A noise will play, then click the Next button to go to the next question.</li></ol></div>
+    <button class="btn" id="go">Start ${arrow}</button>`;
+  document.getElementById("go").onclick = startQuiz;
+}
+
+function startQuiz(){
+  S.score = 0; S.wrong = []; S.order = shuffle(QUESTIONS.map((_,i)=>i));
+  S.pos = 0; S.mode = "main";
+  question();
+}
+
+function question(){
+  const list = S.mode === "main" ? S.order : S.wrong.slice();
+  if (S.mode === "replay") S.replayList = list;
+  const qi = list[S.pos], Q = QUESTIONS[qi];
+  const opts = shuffle([Q.a, ...Q.wrong]);
+  const label = S.mode === "main" ? `Question ${S.pos+1} of ${QUESTIONS.length}` : `Try again ${S.pos+1} of ${list.length}`;
+  app.innerHTML = `<div class="meta"><span>${label}</span><div class="badge" title="Correct answers">${S.score}/${QUESTIONS.length}</div></div>
+    <div class="qbox pop">${Q.q}</div>
+    <div class="answers">${opts.map((o,i)=>`<button class="ans" data-o="${o}">${"ABC"[i]}. ${o}</button>`).join("")}</div>
+    <div class="fb" id="fb"></div>
+    <button class="btn hide" id="next">Next ${arrow}</button>`;
+  const btns = [...document.querySelectorAll(".ans")];
+  btns.forEach(b => b.onclick = () => {
+    const ok = b.dataset.o === Q.a;
+    btns.forEach(x => { x.disabled = true; if (x.dataset.o === Q.a) x.classList.add("right"); });
+    if (!ok) b.classList.add("wrong");
+    sound(ok);
+    if (ok){ S.score++; }
+    else if (S.mode === "main") S.wrong.push(qi);
+    document.querySelector(".badge").textContent = S.score + "/" + QUESTIONS.length;
+    document.getElementById("fb").innerHTML = ok ? CORRECT_MESSAGE : `${INCORRECT_MESSAGE}<small>The correct answer was: ${Q.a}</small>`;
+    const n = document.getElementById("next"); n.classList.remove("hide"); n.focus();
+    if (S.mode === "replay" && ok) S.fixed++;
+    n.onclick = () => {
+      S.pos++;
+      const total = S.mode === "main" ? S.order.length : S.replayList.length;
+      if (S.pos < total) question();
+      else if (S.mode === "main") offerReplay();
+      else { app.innerHTML=""; finish(); }
+    };
+  });
+}
+
+function offerReplay(){
+  if (S.wrong.length === 0) return finish();
+  app.innerHTML = `<h2 class="big">Nearly there!</h2>
+    <p style="font-size:18px">You missed ${S.wrong.length}. Try them again?</p>
+    <div class="row"><button class="btn" id="y">Yes</button><button class="btn alt" id="n">No</button></div>`;
+  document.getElementById("y").onclick = () => { S.mode="replay"; S.pos=0; S.fixed=0; question(); };
+  document.getElementById("n").onclick = finish;
+}
+
+function finish(){
+  const max = QUESTIONS.length, pct = Math.round(S.score / max * 100);
+  const msg = pct === 100 ? "Perfect score!" : pct >= 60 ? "Great work!" : "Keep practising!";
+  const isBest = S.score > S.best; if (isBest) S.best = S.score;
+  const fixedLine = S.mode === "replay" ? `<p>You fixed ${S.fixed} of ${S.wrong.length}.</p>` : "";
+  app.innerHTML = `<h2 class="big pop">Quiz finished!</h2>
+    <div class="badge pop" style="width:110px;height:128px;font-size:34px">${S.score}/${max}</div>
+    ${fixedLine}
+    <p style="font-size:18px;margin:0">Your score: ${S.score} out of ${max}. That is ${pct} percent.</p>
+    <p style="font-size:22px;font-weight:600;margin:0">${msg}</p>
+    ${isBest ? '<p style="margin:0;font-weight:600">New best score!</p>' : ""}
+    <p style="margin:0">Best score this session: ${S.best}</p>
+    <div class="row"><button class="btn" id="again">Play again ${arrow}</button><button class="btn alt" id="bye">No thanks</button></div>`;
+  document.getElementById("again").onclick = startQuiz;
+  document.getElementById("bye").onclick = () => {
+    app.innerHTML = `<h2 class="big">${GOODBYE_MESSAGE}</h2><button class="btn" id="s">Start ${arrow}</button>`;
+    document.getElementById("s").onclick = titleScreen;
+  };
+}
+
+titleScreen();
+</script>
+</body>
+</html>

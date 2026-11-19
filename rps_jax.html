@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rock, Paper, Scissors</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<style>
+:root{--bg:#0b0b0b;--panel:#2f2f2f;--panel2:#3d3d3d;--ink:#f4f4f4;--dim:#9a9a9a;--red:#e8262b;--blue:#4cc3ff;--green:#5ddc6b;
+color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Press Start 2P',ui-monospace,Menlo,Consolas,monospace;line-height:1.6}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.stage{width:100%;max-width:540px;background:var(--panel);border:4px solid #000;box-shadow:0 0 0 4px var(--panel2),8px 8px 0 #000;padding:24px 20px;text-align:center;min-height:520px;display:flex;flex-direction:column;justify-content:center;gap:18px}
+h1{font-size:clamp(18px,5vw,28px);margin:0;letter-spacing:2px;line-height:1.4}
+h2{font-size:clamp(16px,4.5vw,24px);margin:0;color:var(--red);letter-spacing:3px}
+p{font-size:11px;margin:0;color:var(--dim)}
+.icons{display:flex;justify-content:center;gap:22px;align-items:center}
+svg{shape-rendering:crispEdges;display:block}
+button{font:inherit;font-size:12px;color:var(--ink);background:#111;border:4px solid #000;padding:12px 14px;cursor:pointer;text-transform:uppercase}
+button:hover,button:focus-visible{border-color:var(--red);outline:none}
+button.big{background:#b8b8b8;color:#fff;background:var(--red);font-size:16px;padding:16px 28px;align-self:center;box-shadow:4px 4px 0 #000}
+button.big:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #000}
+button.ghost{background:transparent;color:var(--dim);font-size:10px;border-color:#555}
+input{font:inherit;font-size:12px;background:#111;color:var(--ink);border:4px solid #000;padding:12px;text-align:center;width:min(280px,100%);align-self:center}
+input:focus{border-color:var(--red);outline:none}
+.rules{list-style:none;margin:0;padding:16px;border:4px solid #bbb;background:#1a1a1a;text-align:left;font-size:11px;display:grid;gap:14px}
+.rules li::before{content:"■ ";color:var(--red)}
+.bar{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);gap:8px;flex-wrap:wrap}
+.bar b{color:var(--ink);font-weight:400}
+.versus{display:flex;justify-content:space-around;align-items:center;background:#111;border:4px solid #000;padding:18px 8px;min-height:150px}
+.side{display:grid;gap:8px;justify-items:center;font-size:9px;color:var(--dim);min-width:90px}
+.vs{font-size:16px}
+.pick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pick button{display:grid;gap:8px;justify-items:center;padding:12px 4px;font-size:10px}
+.pick button.sel{border-color:var(--red)}
+.pick button:disabled{opacity:.5;cursor:default}
+.result{font-size:clamp(28px,9vw,48px);color:var(--red);min-height:1.4em;letter-spacing:3px}
+.result.win{color:var(--green)}.result.draw{color:var(--blue)}
+.streak{color:#ffd23f;font-size:11px;min-height:1.4em}
+.score{font-size:clamp(34px,11vw,60px);letter-spacing:6px;color:var(--ink)}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.pop{animation:pop .35s steps(4)}
+@keyframes pop{0%{transform:scale(.4)}100%{transform:scale(1)}}
+.shake{animation:shake .5s steps(6) infinite}
+@keyframes shake{50%{transform:translateY(-10px)}}
+@media (prefers-reduced-motion:reduce){.pop,.shake{animation:none}}
+</style>
+</head>
+<body>
+<main class="stage" id="stage" aria-live="polite"></main>
+<script>
+// ===== SETTINGS (from the student's BLOCK A) =====
+const GAME_TITLE = "ROCK, PAPER, SCISSORS";
+const COMPUTER_NAME = "Computer";
+const WIN_MESSAGE = "You win!";
+const LOSE_MESSAGE = "You lose!";
+const DRAW_MESSAGE = "It is a draw!";
+const GOODBYE_MESSAGE = "Thanks for playing!";
+const WINS_NEEDED = 3;
+const CHOICES = ["rock", "paper", "scissors"];
+const INSTRUCTIONS = [
+  "Welcome to the game!",
+  "Choose rock, paper or scissors.",
+  "Rock beats scissors, scissors beat paper, paper beats rock.",
+  "First to " + WINS_NEEDED + " round wins takes the match."
+];
+
+// ===== GAME STATE =====
+let S;
+function newSession(name){
+  S = {name: name || "Player", wins:0, losses:0, draws:0, rounds:0, streak:0, best:0,
+       pw:0, cw:0, round:0, locked:false, last:null};
+}
+newSession("");
+
+// ===== PIXEL ICONS =====
+function icon(type, size=64, color){
+  const c = color || "currentColor";
+  const q = "?";
+  const shapes = {
+    rock:`<polygon points="8,40 14,20 28,10 46,12 56,28 54,46 38,56 18,54" fill="${color||'#9a9a9a'}"/><polygon points="20,24 30,16 42,18 34,28" fill="#c8c8c8"/>`,
+    paper:`<polygon points="14,6 40,6 52,18 52,58 14,58" fill="${color||'#f4f4f4'}"/><polygon points="40,6 40,18 52,18" fill="#bdbdbd"/><rect x="20" y="28" width="26" height="3" fill="#888"/><rect x="20" y="38" width="26" height="3" fill="#888"/><rect x="20" y="48" width="18" height="3" fill="#888"/>`,
+    scissors:`<g fill="${color||'#f4f4f4'}"><polygon points="30,34 12,4 20,2 38,30"/><polygon points="34,34 52,4 44,2 26,30"/></g><g fill="none" stroke="${color||'#f4f4f4'}" stroke-width="5"><circle cx="20" cy="48" r="8"/><circle cx="44" cy="48" r="8"/></g><rect x="30" y="30" width="4" height="8" fill="#e8262b"/>`,
+    unknown:`<rect x="6" y="6" width="52" height="52" fill="none" stroke="#666" stroke-width="4" stroke-dasharray="8 6"/><text x="32" y="44" text-anchor="middle" font-size="32" fill="#888" font-family="monospace">?</text>`
+  };
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" role="img" aria-label="${type}">${shapes[type]}</svg>`;
+}
+
+// ===== LOGIC (from the student's get_winner / get_computer_choice) =====
+const getComputerChoice = () => CHOICES[Math.floor(Math.random()*CHOICES.length)];
+function getWinner(p, c){
+  if (p === c) return "draw";
+  if ((p==="rock"&&c==="scissors")||(p==="paper"&&c==="rock")||(p==="scissors"&&c==="paper")) return "win";
+  return "lose";
+}
+const $ = s => document.getElementById("stage");
+const show = html => { $().innerHTML = html; };
+const cap = w => w.charAt(0).toUpperCase()+w.slice(1);
+const esc = t => t.replace(/[&<>"]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+
+// ===== SCREENS =====
+function titleScreen(){
+  show(`
+    <h1>${GAME_TITLE}</h1>
+    <div class="icons">${icon("rock",56)}${icon("paper",56)}${icon("scissors",56)}</div>
+    <input id="nm" maxlength="14" placeholder="Enter your name" aria-label="Your name" value="${S.name==='Player'?'':esc(S.name)}">
+    <button class="big" id="start">Start</button>
+    <button class="ghost" id="rules">Rules</button>`);
+  document.getElementById("start").onclick = () => {
+    newSession(document.getElementById("nm").value.trim().slice(0,14));
+    startMatch();
+  };
+  document.getElementById("rules").onclick = rulesScreen;
+  document.getElementById("nm").onkeydown = e => { if(e.key==="Enter") document.getElementById("start").click(); };
+}
+
+function rulesScreen(){
+  show(`
+    <h2>Rules</h2>
+    <ul class="rules">${INSTRUCTIONS.map(l=>`<li>${l}</li>`).join("")}</ul>
+    <div class="icons">${icon("rock",40)}<span>&gt;</span>${icon("scissors",40)}<span>&gt;</span>${icon("paper",40)}<span>&gt;</span>${icon("rock",40)}</div>
+    <button class="big" id="back">Back</button>`);
+  document.getElementById("back").onclick = titleScreen;
+}
+
+function startMatch(){
+  S.pw = 0; S.cw = 0; S.round = 0;
+  roundScreen();
+}
+
+function roundScreen(resultHTML, chosen, comp){
+  const picking = !resultHTML;
+  S.round = picking ? S.round + 1 : S.round;
+  drawRound(null, null, null);
+}
+
+function drawRound(result, p, c, shaking){
+  show(`
+    <div class="bar"><span>${esc(S.name)} <b>${S.pw}</b></span><h2 style="font-size:16px">Round ${S.round}</h2><span>${COMPUTER_NAME} <b>${S.cw}</b></span></div>
+    <p>${p ? "" : "Pick 1"}</p>
+    <div class="versus">
+      <div class="side ${shaking?'shake':''}">${icon(p||"unknown",72)}<span>${esc(S.name)}</span></div>
+      <div class="vs">VS</div>
+      <div class="side ${shaking?'shake':''}">${icon(c||"unknown",72)}<span>${COMPUTER_NAME}</span></div>
+    </div>
+    <div class="result ${result||''} ${result?'pop':''}">${result==="win"?"WIN!":result==="lose"?"LOSE":result==="draw"?"DRAW":""}</div>
+    <div class="streak">${result==="win"&&S.streak>=2?"Winning streak: "+S.streak:result?(result==="win"?WIN_MESSAGE:result==="lose"?LOSE_MESSAGE:DRAW_MESSAGE):""}</div>
+    <div class="pick">${CHOICES.map(ch=>`<button data-c="${ch}" class="${p===ch?'sel':''}" ${S.locked?'disabled':''}>${icon(ch,44)}${cap(ch)}</button>`).join("")}</div>
+    <div class="bar"><span>Wins <b>${S.wins}</b></span><span>Losses <b>${S.losses}</b></span><span>Draws <b>${S.draws}</b></span></div>`);
+  document.querySelectorAll(".pick button").forEach(b => b.onclick = () => play(b.dataset.c));
+}
+
+function play(playerChoice){
+  if (S.locked) return;
+  S.locked = true;
+  const comp = getComputerChoice();
+  drawRound(null, playerChoice, null, true);
+  setTimeout(() => {
+    const result = getWinner(playerChoice, comp);
+    S.rounds++;
+    if (result==="win"){ S.wins++; S.pw++; S.streak++; if(S.streak>S.best) S.best=S.streak; }
+    else if (result==="lose"){ S.losses++; S.cw++; S.streak=0; }
+    else S.draws++;
+    drawRound(result, playerChoice, comp, false);
+    const matchOver = S.pw>=WINS_NEEDED || S.cw>=WINS_NEEDED;
+    setTimeout(() => {
+      S.locked = false;
+      if (matchOver) matchScreen();
+      else { S.round++; drawRound(null, null, null, false); }
+    }, 1500);
+  }, 700);
+}
+
+function matchScreen(){
+  const won = S.pw > S.cw;
+  show(`
+    <h1 style="color:${won?'var(--green)':'var(--red)'}" class="pop">${won?"YOU WIN":"YOU LOSE"}</h1>
+    <div class="score">${S.pw} - ${S.cw}</div>
+    <p>${won?`You won the match ${S.pw} to ${S.cw}!`:`${COMPUTER_NAME} won the match ${S.cw} to ${S.pw}.`}</p>
+    <div class="streak">Streak: ${S.streak} &nbsp; Best: ${S.best}</div>
+    <div class="bar" style="justify-content:center;gap:18px"><span>Wins <b>${S.wins}</b></span><span>Losses <b>${S.losses}</b></span><span>Draws <b>${S.draws}</b></span></div>
+    <p>Play again?</p>
+    <div class="row"><button class="big" id="yes">Yes</button><button class="big" id="no" style="background:#111">No</button></div>`);
+  document.getElementById("yes").onclick = startMatch;
+  document.getElementById("no").onclick = goodbyeScreen;
+}
+
+function goodbyeScreen(){
+  show(`
+    <h1>${GOODBYE_MESSAGE}</h1>
+    <div class="icons">${icon("rock",48)}${icon("paper",48)}${icon("scissors",48)}</div>
+    <p>Rounds played: <b style="color:var(--ink)">${S.rounds}</b></p>
+    <p>Your best winning streak was <b style="color:var(--ink)">${S.best}</b></p>
+    <button class="big" id="again">Start</button>`);
+  document.getElementById("again").onclick = titleScreen;
+}
+
+titleScreen();
+</script>
+</body>
+</html>

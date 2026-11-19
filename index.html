@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Technologies | Activities</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: Arial, sans-serif;
+            background: #101827;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        header {
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #aab6c8;
+            font-size: 1.05rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 22px;
+        }
+
+        .card {
+            display: block;
+            padding: 25px;
+            background: #1c293c;
+            border: 1px solid #34445b;
+            border-radius: 14px;
+            text-decoration: none;
+            color: white;
+            transition: 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: #263951;
+            border-color: #60a5fa;
+        }
+
+        .icon {
+            font-size: 2.2rem;
+            margin-bottom: 18px;
+        }
+
+        .card h2 {
+            margin: 0 0 10px;
+            font-size: 1.25rem;
+        }
+
+        .card p {
+            margin: 0;
+            color: #aab6c8;
+            line-height: 1.5;
+        }
+
+        footer {
+            margin-top: 50px;
+            color: #718096;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Digital Technologies</h1>
+        <p>Games, activities and interactive learning tools</p>
+    </header>
+
+    <main class="grid">
+
+        <!-- ADD NEW ACTIVITIES BELOW -->
+
+        <a class="card" href="rps.html">
+            <div class="icon">✊</div>
+            <h2>Rock Paper Scissors</h2>
+            <p>Play, customise and extend the classic game.</p>
+        </a>
+
+        <!-- COPY A CARD TO ADD ANOTHER ACTIVITY -->
+
+    </main>
+
+    <footer>
+        Digital Technologies | Interactive Learning Resources
+    </footer>
+
+</div>
+
+</body>
+</html>
